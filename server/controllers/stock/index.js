@@ -1178,11 +1178,6 @@ async function listLotsDepotDetailed(req, res, next) {
 async function listInventoryDepot(req, res, next) {
   const params = req.query;
 
-  // expose connected user data
-  if (req.session.stock_settings.enable_strict_depot_permission) {
-    params.check_user_id = req.session.user.id;
-  }
-
   params.month_average_consumption = req.session.stock_settings.month_average_consumption;
   params.average_consumption_algo = req.session.stock_settings.average_consumption_algo;
   params.min_delay = req.session.stock_settings.min_delay;

@@ -163,14 +163,22 @@ function ActionRequisitionModalController(
   function loadAvailableInventories() {
     if (!vm.model.depot_uuid) { return {}; }
 
+    // Escaping control over user-managed depots when requesting a requisition for in-stock inventory status
     return Stock.inventories.read(null, {
       depot_uuid : vm.model.depot_uuid,
       includeEmptyLot : 0,
       consumable : 1,
     })
       .then(inventories => {
+        console.log('INV CHECK');
+        console.log(inventories);
+
         vm.supplierInventoriesQuantities = new Map(inventories.map(i => ([i.inventory_uuid, i.quantity])));
         vm.availableSupplierInventories = inventories.map(i => i.inventory_uuid);
+
+        console.log('STOCK DISPONIBLEEEEEEEEEE');
+        console.log(vm.availableSupplierInventories);
+
         return {
           supplierInventoriesQuantities : vm.supplierInventoriesQuantities,
           availableSupplierInventories : vm.availableSupplierInventories,
@@ -180,6 +188,9 @@ function ActionRequisitionModalController(
   }
 
   function checkInventoryAvailability(inventory, currentQuantity) {
+    console.log('CURRENT QUANTITY');
+    console.log(inventory, currentQuantity);
+
     if (vm.model.depot_uuid) {
       if (currentQuantity) {
         inventory.quantity = currentQuantity;
