@@ -36,3 +36,18 @@ CALL add_column_if_missing('stock_setting', 'enable_packaging_pharmaceutical_pro
 CALL add_column_if_missing('inventory', 'is_count_per_container', 'TINYINT(1) NOT NULL DEFAULT 0');
 CALL add_column_if_missing('depot', 'is_count_per_container', 'TINYINT(1) NOT NULL DEFAULT 0');
 CALL add_column_if_missing('lot', 'package_size', 'INT(11) NOT NULL DEFAULT 1');
+
+
+DROP TABLE IF EXISTS `depot_supervision`;
+
+CREATE TABLE `depot_supervision` (
+  `id` SMALLINT(5) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `user_id` SMALLINT(5) UNSIGNED NOT NULL,
+  `depot_uuid`  BINARY(16) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `depot_supervision_1` (`user_id`,`depot_uuid`),
+  KEY `user_id` (`user_id`),
+  KEY `depot_uuid` (`depot_uuid`),
+  CONSTRAINT `depot_supervision__depot` FOREIGN KEY (`depot_uuid`) REFERENCES `depot` (`uuid`),
+  CONSTRAINT `depot_supervision__user` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
+) ENGINE=InnoDB DEFAULT CHARACTER SET = utf8mb4 DEFAULT COLLATE = utf8mb4_unicode_ci;

@@ -90,6 +90,9 @@ function ActionRequisitionModalController(
     vm.model.requestor_uuid = requestor.uuid;
     // enable auto suggestions only if a depot is selected
     vm.enableAutoSuggest = (requestor.requestor_type_id === DEPOT_REQUESTOR_TYPE && requestor.uuid);
+
+    // Cancel my supplier depot selection if the user changes the requesting depot
+    vm.model.depot_uuid = [];
   };
 
   if (data.uuid) {
@@ -170,14 +173,8 @@ function ActionRequisitionModalController(
       consumable : 1,
     })
       .then(inventories => {
-        console.log('INV CHECK');
-        console.log(inventories);
-
         vm.supplierInventoriesQuantities = new Map(inventories.map(i => ([i.inventory_uuid, i.quantity])));
         vm.availableSupplierInventories = inventories.map(i => i.inventory_uuid);
-
-        console.log('STOCK DISPONIBLEEEEEEEEEE');
-        console.log(vm.availableSupplierInventories);
 
         return {
           supplierInventoriesQuantities : vm.supplierInventoriesQuantities,
@@ -188,9 +185,6 @@ function ActionRequisitionModalController(
   }
 
   function checkInventoryAvailability(inventory, currentQuantity) {
-    console.log('CURRENT QUANTITY');
-    console.log(inventory, currentQuantity);
-
     if (vm.model.depot_uuid) {
       if (currentQuantity) {
         inventory.quantity = currentQuantity;

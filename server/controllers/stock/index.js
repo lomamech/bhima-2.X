@@ -1184,6 +1184,10 @@ async function listInventoryDepot(req, res, next) {
   params.default_purchase_interval = req.session.stock_settings.default_purchase_interval;
   params.enable_expired_stock_out = req.session.stock_settings.enable_expired_stock_out;
 
+  if (req.session.stock_settings.enable_strict_depot_permission) {
+    params.check_user_id = req.session.user.id;
+  }
+
   try {
     // FIXME(@jniles) - these two call essentially the same route.  Do we need both?
     const [inventories, lots] = await Promise.all([
