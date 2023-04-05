@@ -332,6 +332,8 @@
     "ENABLE_PACKAGING_PHARMACEUTICAL_PRODUCTS_HELP_TEXT": "Enable the management of pharmaceutical products by packaging",
     "ORDER_BY_CREATED_AT" : "Sort lots movements by their true creation date",
     "ORDER_BY_CREATED_AT_HELP_TEXT" : "This option allows you to sort lot movements by their true creation date in the system",
+    "ENABLE_REQUISITION_VALIDATION_STEP": "Enable requisition validation step",
+    "ENABLE_REQUISITION_VALIDATION_STEP_HELP_TEXT": "Activated the validation of requisition requests in order to assess the satisfaction rate",
     "ENABLE_STRICT_DEPOT_DISTRIBUTION" : "Activate the restriction of distribution depots",
     "ENABLE_STRICT_DEPOT_DISTRIBUTION_HELP_TEXT" : "Limits the depots a user can interact with to the depots that the user has access to. Thus, if a user cannot distribute stock from a depot, they also cannot transfer stock to that depot.",
     "MIN_PURCHASE_DELAY": "Minimum delivery delay (in months)",

@@ -332,6 +332,8 @@
     "ORDER_BY_CREATED_AT_HELP_TEXT" : "Cette option permet d'ordonner les movements de lots par leurs dates réelles de création dans le système",
     "ENABLE_PACKAGING_PHARMACEUTICAL_PRODUCTS": "Conditionnement des produits pharmaceutiques",
     "ENABLE_PACKAGING_PHARMACEUTICAL_PRODUCTS_HELP_TEXT": "Activer la gestion des produits pharmaceutiques par conditionnement",
+    "ENABLE_REQUISITION_VALIDATION_STEP": "Activer la validation des requisitions",
+    "ENABLE_REQUISITION_VALIDATION_STEP_HELP_TEXT": "Activer la validation des demandes des requisitions en vue d'évaluer le taux de satisfaction",
     "ENABLE_STRICT_DEPOT_DISTRIBUTION" : "Activer la restriction des depots de distribution",
     "ENABLE_STRICT_DEPOT_DISTRIBUTION_HELP_TEXT" : "Limite les dépôts qui peuvent recevoir du stock à partir d'un dépôt donné; lors de la sortie de stock vers un dépôt, seul les dépôts autorisés peuvent s'afficher pour le dépôt donné afin de recevoir du stock",
     "MIN_PURCHASE_DELAY": "Délai d'achat minimum",

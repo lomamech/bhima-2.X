@@ -54,3 +54,10 @@ CALL add_column_if_missing('user', 'is_admin', 'TINYINT(1) NOT NULL DEFAULT 0');
  * @date: 2023-03-02
  */
 CALL add_column_if_missing('purchase_item', 'package_size', 'INT(11) NOT NULL DEFAULT 1');
+
+/*
+ * @author: lomamech
+ * @date: 2023-04-05
+ * @description: Satisfaction rate reportn
+*/
+CALL add_column_if_missing('stock_setting', 'enable_requisition_validation_step', 'TINYINT(1) NOT NULL DEFAULT 0');
