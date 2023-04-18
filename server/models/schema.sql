@@ -2061,6 +2061,8 @@ CREATE TABLE `stock_requisition` (
   `status_id`           TINYINT(3) UNSIGNED NOT NULL DEFAULT 1,
   `updated_at`          TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `created_at`          TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `validator_user_id`   SMALLINT(5) UNSIGNED DEFAULT NULL,
+  `validation_date`     DATETIME NULL,
   PRIMARY KEY (`uuid`),
   UNIQUE KEY `stock_requisition_uuid` (`uuid`),
   UNIQUE KEY `stock_requisition_2` (`project_id`, `reference`),
@@ -2076,6 +2078,7 @@ CREATE TABLE `stock_requisition_item` (
   `requisition_uuid`  BINARY(16) NOT NULL,
   `inventory_uuid`    BINARY(16) NOT NULL,
   `quantity`          INT(11) NOT NULL DEFAULT 0,
+  `old_quantity`       INT(11) NOT NULL DEFAULT 0,
   KEY `requisition_uuid` (`requisition_uuid`),
   CONSTRAINT `stock_req_item__stock_req_item` FOREIGN KEY (`requisition_uuid`) REFERENCES `stock_requisition` (`uuid`)
 ) ENGINE=InnoDB DEFAULT CHARACTER SET = utf8mb4 DEFAULT COLLATE = utf8mb4_unicode_ci;

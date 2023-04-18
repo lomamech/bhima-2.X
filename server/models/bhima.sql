@@ -503,7 +503,9 @@ INSERT IGNORE INTO `status` VALUES
   (4, 'draft', 'FORM.LABELS.STATUS_TYPE.DRAFT', 'label label-info'),
   (5, 'cancelled', 'FORM.LABELS.STATUS_TYPE.CANCELLED', 'label label-danger'),
   (6, 'completed', 'FORM.LABELS.STATUS_TYPE.COMPLETED', 'label label-success'),
-  (7, 'excessive', 'FORM.LABELS.STATUS_TYPE.EXCESSIVE_RECEIVED_QUANTITY', 'label label-danger');
+  (7, 'excessive', 'FORM.LABELS.STATUS_TYPE.EXCESSIVE_RECEIVED_QUANTITY', 'label label-danger'),
+  (8, 'partial_surpluses', 'FORM.LABELS.STATUS_TYPE.PARTIAL_SURPLUSES', 'label label-warning'),
+  (9, 'validated', 'FORM.LABELS.STATUS_TYPE.VALIDATED', 'label label-info');    
 
 -- type of requestors
 INSERT IGNORE INTO `stock_requestor_type` (`type_key`, `title_key`) VALUES

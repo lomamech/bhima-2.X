@@ -42,6 +42,7 @@ function StockModalService(Modal) {
   service.openSearchStockAssign = openSearchStockAssign;
   service.openSearchStockRequisition = openSearchStockRequisition;
   service.openSetPackaging = openSetPackaging;
+  service.openActionValidationRequisition = openActionValidationRequisition;
 
   // generate tag numbers
   function openGenerateAssetBarcodes(request) {
@@ -227,6 +228,18 @@ function StockModalService(Modal) {
     const params = angular.extend(modalParameters, {
       templateUrl  : 'modules/stock/requisition/modals/action.modal.html',
       controller   : 'ActionRequisitionModalController',
+      resolve      : { data : () => request },
+    });
+
+    const instance = Modal.open(params);
+    return instance.result;
+  }
+
+  /** create stock validation requisition */
+  function openActionValidationRequisition(request) {
+    const params = angular.extend(modalParameters, {
+      templateUrl  : 'modules/stock/requisition/modals/validation.modal.html',
+      controller   : 'ValidationRequisitionModalController',
       resolve      : { data : () => request },
     });
 

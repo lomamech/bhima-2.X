@@ -1,15 +1,16 @@
 angular.module('bhima.controllers')
-  .controller('ActionRequisitionModalController', ActionRequisitionModalController);
+  .controller('ValidationRequisitionModalController', ValidationRequisitionModalController);
 
 // dependencies injections
-ActionRequisitionModalController.$inject = [
+ValidationRequisitionModalController.$inject = [
   'Store', 'InventoryService', 'NotifyService',
   '$uibModalInstance', 'StockService', 'ReceiptModal', 'data',
 ];
 
-function ActionRequisitionModalController(
+function ValidationRequisitionModalController(
   Store, Inventories, Notify, Modal, Stock, Receipts, data,
 ) {
+
   const vm = this;
   vm.isCreateState = true;
   vm.requistionReference = '';
@@ -24,8 +25,9 @@ function ActionRequisitionModalController(
     },
     {
       field : 'inventory_uuid',
-      displayName : 'FORM.LABELS.INVENTORY',
+      displayName : 'FORM.LABELS.CODE',
       headerCellFilter : 'translate',
+      width : 50,
       cellTemplate : 'modules/stock/requisition/templates/inventory.cell.html',
     },
 
@@ -40,14 +42,18 @@ function ActionRequisitionModalController(
       field : 'quantity',
       displayName : 'FORM.LABELS.QUANTITY',
       headerCellFilter : 'translate',
-      cellTemplate : 'modules/stock/requisition/templates/quantity.cell.html',
+      width : 95,
+      cellTemplate : 'modules/stock/requisition/templates/old_quantity.cell.html',
       type : 'number',
     },
 
     {
-      field : 'action',
-      width : 25,
-      cellTemplate : 'modules/stock/requisition/templates/remove.cell.html',
+      field : 'quantity_validated',
+      displayName : 'FORM.LABELS.QUANTITY_VALIDATED',
+      headerCellFilter : 'translate',
+      width : 135,
+      cellTemplate : 'modules/stock/requisition/templates/quantity.cell.html',
+      type : 'number',
     },
   ];
 
@@ -103,13 +109,17 @@ function ActionRequisitionModalController(
     Stock.stockRequisition.read(data.uuid)
       .then((requisionData) => {
         vm.requistionReference = requisionData.reference;
+
         requisionData.items.forEach((item, index) => {
+          item.old_quantity = item.quantity;
+
           addItem(1, {
             _initialised : true,
             id : index,
             inventory_uuid : item.inventory_uuid,
             code : item.code,
             S_Q : item.quantity,
+            old_quantity : item.old_quantity,
             quantity : item.quantity,
             inventory_label : item.text,
             uuid : item.inventory_uuid,
@@ -126,7 +136,6 @@ function ActionRequisitionModalController(
     if (form.$invalid) { return null; }
 
     const items = store.data.map(getItem);
-
     if (!items.length) { return null; }
 
     angular.extend(vm.model, { items });
@@ -140,13 +149,10 @@ function ActionRequisitionModalController(
       requestor_type_id : vm.model.requestor_type_id,
       requestor_uuid : vm.model.requestor_uuid,
       user_id : vm.model.user_id,
+      isValidation : true,
     };
 
-    const promise = (vm.isCreateState)
-      ? Stock.stockRequisition.create(vm.model)
-      : Stock.stockRequisition.update(vm.requisitionUuid, updateElement);
-
-    return promise
+    return Stock.stockRequisition.update(vm.requisitionUuid, updateElement)
       .then(res => {
         Receipts.stockRequisitionReceipt(res.uuid, true);
         Modal.close(true);
@@ -199,10 +205,6 @@ function ActionRequisitionModalController(
         inventory.hasEnoughQuantity = !!(vm.supplierInventoriesQuantities.get(identifier) >= quantity);
         inventory.supplierAvailableQuantity = vm.supplierInventoriesQuantities.get(identifier);
       }
-
-      console.log('DIS INventoryyyyyyyyyyyyyy');
-      console.log(inventory);
-
     }
 
     return inventory;
@@ -231,6 +233,7 @@ function ActionRequisitionModalController(
     return {
       inventory_uuid : row.inventory_uuid,
       quantity : row.quantity,
+      old_quantity : row.old_quantity,
     };
   }
 
@@ -275,6 +278,7 @@ function ActionRequisitionModalController(
         row.inventory = item;
         row.inventory_uuid = item.inventory_uuid;
         row.quantity = item.S_Q;
+        row.old_quantity = row.quantity;
 
         if (item.inventory_label) {
           row.inventory.label = item.inventory_label;

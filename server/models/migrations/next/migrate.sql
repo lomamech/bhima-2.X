@@ -58,6 +58,15 @@ CALL add_column_if_missing('purchase_item', 'package_size', 'INT(11) NOT NULL DE
 /*
  * @author: lomamech
  * @date: 2023-04-05
- * @description: Satisfaction rate reportn
+ * @description: Satisfaction rate report
 */
 CALL add_column_if_missing('stock_setting', 'enable_requisition_validation_step', 'TINYINT(1) NOT NULL DEFAULT 0');
+CALL add_column_if_missing('stock_requisition_item', 'old_quantity', 'INT(11) NOT NULL DEFAULT 0');
+
+-- application process status
+INSERT IGNORE INTO `status` VALUES
+  (8, 'partial_surpluses', 'FORM.LABELS.STATUS_TYPE.PARTIAL_SURPLUSES', 'label label-warning'),
+  (9, 'validated', 'FORM.LABELS.STATUS_TYPE.VALIDATED', 'label label-info');    
+
+CALL add_column_if_missing('stock_requisition', 'validator_user_id', 'SMALLINT(5) UNSIGNED DEFAULT NULL');
+CALL add_column_if_missing('stock_requisition', 'validation_date', 'DATE NULL');
