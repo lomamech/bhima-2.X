@@ -15,14 +15,7 @@ const newFilename = process.argv[3];
 const data = fs.readFileSync(oldFilename, 'utf8');
 const dict = JSON.parse(data);
 
-// Crude but sure how else to do this in Javascript
-function nspaces(n) {
-  let spaces = '';
-  for (let i = 0; i < n; i++) {
-    spaces += ' ';
-  }
-  return spaces;
-}
+const nspaces = (n) => ' '.repeat(n);
 
 // Define the function to write out a sorted dictionary (recursively)
 const writeSortedDict = function (f, d, indent) {
