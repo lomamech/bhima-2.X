@@ -72,12 +72,6 @@ fs.open(newFilename, 'w', (err, f) => {
   fs.closeSync(f);
 
   // Reload the new file to test it
-  const data2 = fs.readFileSync(newFilename, 'utf8', (err2) => {
-    if (err2) {
-      // eslint-disable-next-line no-console
-      console.log(`Reloading ${newFilename} failed!`);
-      throw err2;
-    }
-  });
+  const data2 = fs.readFileSync(newFilename, 'utf8');
   JSON.parse(data2);
 });
