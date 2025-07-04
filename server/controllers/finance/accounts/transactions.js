@@ -187,12 +187,7 @@ function buildLedgerSQL(options, openingBalance = 0) {
   }
 
   // Combine data via UNION ALL if both posted/unposted are included
-  let unionSQL = tableQueries.join(' UNION ALL ');
-  if (tableQueries.length > 1) {
-    unionSQL = `(${unionSQL}) AS ledger`;
-  } else {
-    unionSQL = `(${unionSQL}) AS ledger`;
-  }
+  const unionSQL = `(${tableQueries.join(' UNION ALL ')}) as ledger`;
 
   // Build grouping statement
   // Once grouped per record_uuid, we apply the currency conversion logic
