@@ -15,6 +15,7 @@
  */
 
 const _ = require('lodash');
+const debug = require('debug')('bhima:journal:index');
 const { uuid } = require('../../../lib/util');
 
 // module dependencies
@@ -104,12 +105,17 @@ function findJournalLog(options) {
  * @returns {Promise} object - a promise resolving to the part of transaction object.
  */
 async function lookupTransaction(recordUuid) {
+
+  debug(`Looking up transaction with record_uuid: ${recordUuid}.`);
+
   const options = {
     record_uuid : recordUuid,
     includeNonPosted : true,
   };
 
   const result = await find(options);
+
+  debug(`Found ${result.length} records.`);
 
   if (result.length === 0) {
     throw new NotFound(`Could not find a transaction with record_uuid: ${recordUuid}.`);
@@ -305,7 +311,6 @@ async function list(req, res) {
 async function getTransaction(req, res) {
   const transaction = await lookupTransaction(req.params.record_uuid);
   res.status(200).json(transaction);
-
 }
 
 // @TODO(sfount) move edit transaction code to separate server controller - split editing process
@@ -317,9 +322,12 @@ async function editTransaction(req, res) {
   const UPDATE_TRANSACTION_HISTORY = 'INSERT INTO transaction_history SET ?;';
   const UPDATE_RECORD_EDITED_FLAG = 'UPDATE ?? SET edited = 1 WHERE uuid = ?;';
 
-  const transaction = db.transaction();
+  debug(`#editTransaction(): Beginning edit transaction for record_uuid: ${req.params.record_uuid}.`);
+
   const { record_uuid : recordUuid } = req.params;
   const { changed : rowsChanged, added : rowsAdded, removed : rowsRemoved } = req.body;
+
+  const transaction = db.transaction();
 
   rowsRemoved.forEach(row => {
     const deletedTransactionHistory = {
@@ -340,12 +348,17 @@ async function editTransaction(req, res) {
   const [{ posted, hrRecord }] = transactionToEdit;
   const transactionId = transactionToEdit[0].trans_id;
 
+  debug(`#editTransaction(): Transaction being edited is: ${transactionId} (${hrRecord}).`);
+  debug(`#editTransaction(${transactionId}): This transaction is ${posted ? 'posted' : 'unposted'}`);
+
   // recordTableToEdit is now either voucher, invoice, or cash
   const [prefix] = hrRecord.split('.');
   const recordTableToEdit = hrRecordToTableMap[prefix];
+  debug(`#editTransaction(${transactionId}): The parent table of the transaction is: ${recordTableToEdit}.`);
 
   // check the source (posted vs. non-posted) of the first transaction row
   if (posted) {
+    debug(`#editTransaction(${transactionId}): Aborting edit.`);
     throw new BadRequest(
       `Posted transactions cannot be edited.  Transaction ${transactionId} is already posted.`,
       'POSTING_JOURNAL.ERRORS.TRANSACTION_ALREADY_POSTED',
@@ -356,7 +369,14 @@ async function editTransaction(req, res) {
   // the deletion API
   const allRowsRemoved = (rowsAdded.length === 0 && rowsRemoved.length >= transactionToEdit.length);
   const singleRow = ((rowsAdded.length - rowsRemoved.length) + transactionToEdit.length) === 1;
+
+  debug(`#editTransaction(${transactionId}): Original transaction length ${transactionToEdit.length} rows.`);
+  debug(`#editTransaction(${transactionId}): The number of rows to be added is ${rowsAdded.length} rows.`);
+  debug(`#editTransaction(${transactionId}): The number of rows to be removed is ${rowsRemoved.length} rows.`);
+
   if (allRowsRemoved || singleRow) {
+    debug(`#editTransaction(${transactionId}): Too few remaining rows after edits applied!`);
+    debug(`#editTransaction(${transactionId}): Aborting edit.`);
     throw new BadRequest(
       `Transaction ${transactionId} has too few rows!  A valid transaction must contain at least two rows.`,
       'POSTING_JOURNAL.ERRORS.TRANSACTION_MUST_CONTAIN_ROWS',
@@ -368,6 +388,9 @@ async function editTransaction(req, res) {
   const fiscalYear = await FiscalService.lookupFiscalYearByDate(transDate);
 
   if (fiscalYear.locked) {
+    debug(`#editTransaction(${transactionId}): The transaction date is ${transDate} in a locked fiscal year.`);
+    debug(`#editTransaction(${transactionId}): Aborting edit.`);
+
     throw new BadRequest(
       `${fiscalYear.label} is closed and locked.  You cannot make transactions against it.`,
       'POSTING_JOURNAL.ERRORS.CLOSED_FISCAL_YEAR',
@@ -384,7 +407,8 @@ async function editTransaction(req, res) {
 
   result = await transformColumns(rowsChanged, false, transactionToEdit, fiscalYear);
 
-  result.forEach((row, uid) => {
+  // NOTE: this "result" is an object, so it requires a different iteration
+  _.each(result, (row, uid) => {
     db.convert(row, ['entity_uuid']);
     transaction.addQuery(UPDATE_JOURNAL_ROW, [row, db.bid(uid)]);
   });
@@ -438,6 +462,9 @@ function transformColumns(rows, newRecord, transactionToEdit, setFiscalData) {
   const projectId = transactionToEdit[0].project_id;
   const transactionDate = transactionToEdit[0].trans_date;
   const currencyId = transactionToEdit[0].currency_id;
+  const transId = transactionToEdit[0].trans_id;
+
+  debug(`#transformColumns(${transId}): ${newRecord ? 'Adding' : 'Editing'} the transaction columns.`);
 
   const databaseRequests = [];
   const databaseValues = [];
@@ -448,6 +475,7 @@ function transformColumns(rows, newRecord, transactionToEdit, setFiscalData) {
   // this works on both the object provided from changes and the array from new
   // rows - that might be a hack
   _.each(rows, (row) => {
+
     // supports specific columns that can be edited on the client
     // accounts are required on new rows, business logic should be moved elsewhere
     if (newRecord && !row.account_number) {
