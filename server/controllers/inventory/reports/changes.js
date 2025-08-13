@@ -24,7 +24,11 @@ const TEMPLATE = './server/controllers/inventory/reports/changes.handlebars';
  */
 function transformChangeLogRecords(records) {
   return records.flatMap((record) => {
-    const { last, current } = JSON.parse(record.changes);
+    const changes = typeof record.changes === 'string'
+      ? JSON.parse(record.changes)
+      : record.changes;
+
+    const { last, current } = changes;
     const prev = formatKeys(last);
     const next = formatKeys(current);
 
