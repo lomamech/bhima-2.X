@@ -1,20 +1,18 @@
-const { describe, it, before }= require('node:test');
+const { describe, it, before, after }= require('node:test');
 const assert = require('node:assert/strict');
 
-const db = require('../../server/lib/db');
-
 describe('test/server-unit/mysql_functions', () => {
-
   const tableName1 = 'my_test_table1';
   const tableName2 = 'my_test_table2';
   const constraint1 = 'constraint1';
   const constraint2 = 'constraint2';
 
+  const db = require('../../server/lib/db');
+
   before(async () => {
     await db.exec(`DROP TABLE IF EXISTS ${tableName1};`);
     await db.exec(`DROP TABLE IF EXISTS ${tableName2};`);
   });
-
 
   const createTable1Sql = `
     CREATE TABLE IF NOT EXISTS ${tableName1} (
@@ -125,4 +123,8 @@ describe('test/server-unit/mysql_functions', () => {
     assert.equal(row.exist, 0, 'The index was not removed.');
   });
 
+  after(async () => {
+    await db.exec(`DROP TABLE IF EXISTS ${tableName1};`);
+    await db.exec(`DROP TABLE IF EXISTS ${tableName2};`);
+  });
 });

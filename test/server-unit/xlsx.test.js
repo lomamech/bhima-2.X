@@ -1,14 +1,15 @@
 const { describe, it }= require('node:test');
 const assert = require('node:assert/strict');
-
 const rewire = require('rewire');
 
-const xlsx = rewire('../../server/lib/renderers/xlsx');
-
-// mock the translation as a no-op function
-xlsx.__set__('i18n', () => (() => {}));
 
 describe('test/server-unit/xlsx', () => {
+
+  const xlsx = rewire('../../server/lib/renderers/xlsx');
+
+  // mock the translation as a no-op function
+  xlsx.__set__('i18n', () => (() => {}));
+
   const data = {
     rows : [{ Firstname : 'Alice', Lastname : 'Bob' }],
   };

@@ -4,8 +4,6 @@ const assert = require('node:assert/strict');
 const path = require('node:path');
 const fs = require('node:fs');
 
-const _ = require('lodash')
-
 const util = require('../../server/lib/util');
 
 describe('test/server-unit/util', () => {
@@ -14,7 +12,7 @@ describe('test/server-unit/util', () => {
     const objects = [{ id : 1 }, { id : 2 }, { id : 3 }];
     const expected = [1, 2, 3];
     const filter = util.take('id');
-    const ids = _.flatMap(objects, filter);
+    const ids = objects.flatMap(filter);
     assert.deepEqual(ids, expected);
   });
 
@@ -171,7 +169,7 @@ describe('test/server-unit/util', () => {
     const obj = {
       a : '1', b : '2.5', c : 'foo', d : 3,
     };
-    const result = util.convertStringToNumber(_.clone(obj));
+    const result = util.convertStringToNumber(structuredClone(obj));
     assert.deepEqual(result, {
       a : 1, b : 2.5, c : 'foo', d : 3,
     });

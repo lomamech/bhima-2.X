@@ -13,13 +13,13 @@ describe('test/server-unit/csv', () => {
   ];
 
   it('exposes render, extension, and headers properties', () => {
-    assert.equal(csv.extension, 'csv', 'The extension property should be "csv"');
+    assert.equal(csv.extension, '.csv', 'The extension property should be "csv"');
     assert.equal(typeof csv.render, 'function', 'The render property should be a function');
     assert.equal(typeof csv.headers, 'object', 'The headers property should be an object');
   });
 
   it('#render() should return a known string output for known input', async () => {
-    const rendered = await csv.render({ csv : data });
+    const rendered = (await csv.render({ csv : data })).replace(/^\uFEFF/, '');
 
     const output = `
 id,name,score,dob
@@ -33,7 +33,8 @@ id,name,score,dob
 
   it('#render() uses options.csvKey to determine which array to process', async () => {
     const otherData = [{ id : 3, check : true }];
-    const rendered = await csv.render({ rows : data, csv : otherData }, null, { csvKey : 'rows' });
+    const rendered = (await csv.render({ rows : data, csv : otherData }, null, { csvKey : 'rows' })).replace(/^\uFEFF/, '');
+
 
     const output = `
 id,name,score,dob
@@ -47,7 +48,7 @@ id,name,score,dob
 
   it('#render() does not remove empty rows', async () => {
     const cloned = [...data, {}];
-    const rendered = await csv.render({ csv : cloned });
+    const rendered = (await csv.render({ csv :cloned})).replace(/^\uFEFF/, '');
     const output = `
 id,name,score,dob
 1,jniles,12,undefined
@@ -61,7 +62,7 @@ undefined,undefined,undefined,undefined`.trim();
 
   it('#render() should convert dates if dates are passed in by default', async () => {
     const ds = [{ start : new Date(2019, 4, 2, 7, 2, 33) }];
-    const rendered = await csv.render({ csv : ds });
+    const rendered = (await csv.render({ csv : ds })).replace(/^\uFEFF/, '');
     const output = `
 start
 02/05/2019 7:02:33`.trim();
@@ -73,7 +74,7 @@ start
     const start = new Date(Date.UTC(2019, 2, 5, 7, 2, 33));
 
     const ds = [{ start }];
-    const rendered = await csv.render({ csv : ds }, null, { suppressDefaultFormatting : true });
+    const rendered = (await csv.render({ csv : ds }, null, { suppressDefaultFormatting : true })).replace(/^\uFEFF/, '');
     const output = `
 start
 ${start.toString()}`.trim();

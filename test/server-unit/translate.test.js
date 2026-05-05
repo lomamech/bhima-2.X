@@ -39,7 +39,7 @@ describe('test/server-unit/translate', () => {
   it('#translate() should return the input if no matching key found', () => {
     const key = 'COLORS.NO_KEY_VALUE_PAIR';
     const compiled = translate('en')(key);
-    assert.equal(compiled, 'Gray');
+    assert.equal(compiled, key);
   });
 
   it('#translate() should return undefined for undefined value', () => {

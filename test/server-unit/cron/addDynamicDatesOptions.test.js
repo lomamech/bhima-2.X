@@ -1,4 +1,4 @@
-const { describe, it, before }= require('node:test');
+const { describe, it, before, after, mock }= require('node:test');
 const assert = require('node:assert/strict');
 const rewire = require('rewire');
 
@@ -11,9 +11,14 @@ describe('test/server-unit/cron/addDynamicDatesOptions', () => {
   const YEARLY = 4;
 
   before(() => {
+    mock.timers.enable();
     const cronEmailReport = rewire('../../../server/controllers/admin/cronEmailReport');
     addDynamicDatesOptions = cronEmailReport.__get__('addDynamicDatesOptions');
   });
+
+  after(() => {
+    mock.timers.reset();
+  })
 
   it('#addDynamicDatesOptions() does nothing if cronId is unrecognized', () => {
     const options = { id : 1, label : 'Some ole options' };
@@ -27,16 +32,16 @@ describe('test/server-unit/cron/addDynamicDatesOptions', () => {
     assert.ok(processed);
 
     const today = new Date().toDateString();
-    assert.equal(processed.dateFrom.toDate().toDateString(), today);
-    assert.equal(processed.dateTo.toDate().toDateString(), today);
+    assert.equal(processed.dateFrom.toDateString(), today);
+    assert.equal(processed.dateTo.toDateString(), today);
   });
 
   it('#addDynamicDatesOptions() sets the WEEKLY schedule to the current week', () => {
     const options = { id : 1, label : 'A schedule' };
     const { dateFrom, dateTo } = addDynamicDatesOptions(WEEKLY, options);
 
-    assert.equal(dateFrom.toDate().getDay(), 0, 'dateFrom should be the first day of the week (Sunday)');
-    assert.equal(dateTo.toDate().getDay(), 6, 'dateTo should be the last day of the week (Saturday)');
+    assert.equal(dateFrom.getDay(), 0, 'dateFrom should be the first day of the week (Sunday)');
+    assert.equal(dateTo.getDay(), 6, 'dateTo should be the last day of the week (Saturday)');
   });
 
   it('#addDynamicDatesOptions() sets the MONTHLY schedule to the current month', () => {
@@ -44,10 +49,10 @@ describe('test/server-unit/cron/addDynamicDatesOptions', () => {
     const { dateFrom, dateTo } = addDynamicDatesOptions(MONTHLY, options);
     const today = new Date();
 
-    assert.equal(dateFrom.toDate().getMonth(), today.getMonth());
-    assert.equal(dateTo.toDate().getMonth(), today.getMonth());
-    assert.equal(dateFrom.toDate().getDate(), 1, 'dateFrom should be the first day of the month');
-    assert.ok(dateTo.toDate().getDate() >= 28, 'dateTo should be the last day of the month (at least 28)');
+    assert.equal(dateFrom.getMonth(), today.getMonth());
+    assert.equal(dateTo.getMonth(), today.getMonth());
+    assert.equal(dateFrom.getDate(), 1, 'dateFrom should be the first day of the month');
+    assert.ok(dateTo.getDate() >= 28, 'dateTo should be the last day of the month (at least 28)');
   });
 
   it('#addDynamicDatesOptions() sets the YEARLY schedule to the current year', () => {
@@ -55,13 +60,13 @@ describe('test/server-unit/cron/addDynamicDatesOptions', () => {
     const { dateFrom, dateTo } = addDynamicDatesOptions(YEARLY, options);
 
     const today = new Date();
-    assert.equal(dateFrom.toDate().getFullYear(), today.getFullYear(), 'dateFrom should be the current year');
-    assert.equal(dateTo.toDate().getFullYear(), today.getFullYear(), 'dateTo should be the current year');
+    assert.equal(dateFrom.getFullYear(), today.getFullYear(), 'dateFrom should be the current year');
+    assert.equal(dateTo.getFullYear(), today.getFullYear(), 'dateTo should be the current year');
 
-    assert.equal(dateFrom.toDate().getMonth(), 0, 'dateFrom should be January');
-    assert.equal(dateTo.toDate().getMonth(), 11, 'dateTo should be December');
+    assert.equal(dateFrom.getMonth(), 0, 'dateFrom should be January');
+    assert.equal(dateTo.getMonth(), 11, 'dateTo should be December');
 
-    assert.equal(dateFrom.toDate().getDate(), 1, 'dateFrom should be the first day of the year');
-    assert.equal(dateTo.toDate().getDate(), 31, 'dateTo should be the last day of the year');
+    assert.equal(dateFrom.getDate(), 1, 'dateFrom should be the first day of the year');
+    assert.equal(dateTo.getDate(), 31, 'dateTo should be the last day of the year');
   });
 });

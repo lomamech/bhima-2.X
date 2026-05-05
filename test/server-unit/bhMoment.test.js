@@ -23,8 +23,8 @@ function evaluate(startDate, endDate, dateBhMoment) {
   };
 
   const formated = {
-    dateFrom : dateBhMoment.dateFrom.toDate(),
-    dateTo : dateBhMoment.dateTo.toDate(),
+    dateFrom : dateBhMoment.dateFrom,
+    dateTo : dateBhMoment.dateTo,
   };
 
   assert.deepEqual(formated, expected, 'The dateFrom and dateTo should match the expected values');
