@@ -15,7 +15,7 @@ const debug = require('debug')('app:allocationCostCenter:automatic');
 async function automatic(req, res) {
   const { data } = req.body;
 
-  if (!data && !data.length) {
+  if (!Array.isArray(data) || data.length === 0) {
     throw new NotFound(`No data provided for automatic distribution`);
   }
 
@@ -40,9 +40,6 @@ async function automatic(req, res) {
   rows.forEach((row) => {
     data.forEach((item) => {
       item.is_cost = item.is_cost || 0;
-
-      console.log("row.uuid", row.row_uuid)
-      console.log("item.uuid", item.uuid)
 
       if (row.row_uuid === item.uuid) {
         dataToDistribute.push([

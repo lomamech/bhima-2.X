@@ -28,6 +28,6 @@ echo "[test] building the server..."
 
 echo "[test] running server unit tests using native node:test runner"
 
-node --test --test-concurrency=1 test/server-unit/setup.js test/server-unit/**/*.test.js test/server-unit/*.test.js
+node -r dotenv/config --test --test-concurrency=1 test/server-unit/**/*.test.js test/server-unit/*.test.js
 
 echo "[/test]"

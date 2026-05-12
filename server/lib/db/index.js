@@ -336,20 +336,4 @@ class DatabaseConnector {
 
 const db = new DatabaseConnector();
 
-// ensure the process terminates gracefully when an error occurs.
-process.on('uncaughtException', async (e) => {
-  debug('Uncaught Exception!  Shutting down database connector.');
-  debug('Exception details: %O', e);
-  await db.pool.end();
-  process.exit(1);
-});
-
-// crash on unhandled promise rejections
-process.on('unhandledRejection', async (e) => {
-  debug('Uncaught Rejection!  Shutting down database connector.');
-  debug('Exception details: %O', e);
-  await db.pool.end();
-  process.exit(1);
-});
-
 module.exports = db;

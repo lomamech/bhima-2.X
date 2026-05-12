@@ -7,7 +7,8 @@
 
 const os = require('node:os');
 const debug = require('debug')('bhima:app:system:info');
-const { readFile, access, constants } = require('node:fs/promises');
+const { constants } = require('node:fs');
+const { readFile, access } = require('node:fs/promises');
 
 // GET system/info
 exports.info = info;
