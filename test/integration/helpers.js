@@ -210,9 +210,9 @@ exports.data = {
     secondaire : 'd4bb1452-e4fa-4742-a281-814140246877',
   },
   services : {
-    admin : 'B1816006555845F993A0C222B5EFA6CB',
+    admin : 'b1816006-5558-45f9-93a0-c222b5efa6cb',
     test : 'aff85bdc-d7c6-4047-afe7-1724f8cd369e',
-    medicine_interne : 'E3988489EF6641DF88FA8B8ED6AA03AC',
+    medicine_interne : 'e3988489-ef66-41df-88fa-8b8ed6aa03ac',
     newService : '029263E99A29436BB12EE9730A70C515',
     newService2 : '63E9029299A26B43B21EE973051A70C5',
   },

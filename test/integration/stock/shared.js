@@ -160,7 +160,7 @@ const depotSecondaireUuid = 'd4bb1452-e4fa-4742-a281-814140246877';
 const lotVitamineA = '064ab1d9-5246-4402-ae8a-958fcdb07b35';
 const personEntityUuid = '00099b1d-184a-48de-b93d-45fbd0ab3790';
 const enterpriseEntityUuid = '037ac6c6-b75a-4e32-8e9d-cde5da22bace';
-const serviceAdministrationUuid = 'B1816006555845F993A0C222B5EFA6CB';
+const serviceAdministrationUuid = 'b1816006-5558-45f9-93a0-c222b5efa6cb';
 
 const newPersonAssign = {
   depot_uuid : depotPrincipalUuid,
