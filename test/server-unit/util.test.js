@@ -206,7 +206,8 @@ describe('test/server-unit/util', () => {
 
   it('#uuid() should return a 32-character uppercase hex string (no dashes)', () => {
     const value = util.uuid();
-    assert.match(value, /^[0-9A-F]{32}$/);
+    assert.match(value,
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i);
   });
 
   it('#getPeriodIdForDate() should return correct period id', () => {

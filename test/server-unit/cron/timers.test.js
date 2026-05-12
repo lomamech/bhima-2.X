@@ -7,12 +7,12 @@ describe('test/server-unit/cron/timers', () => {
   let addJob;
   let removeJob;
 
-  mock.timers.enable();
 
   // this crontab fires once a minute
   const CRONTAB = '* * * * *';
 
   before(() => {
+    mock.timers.enable();
     const cronEmailReport = rewire('../../../server/controllers/admin/cronEmailReport');
     addJob = cronEmailReport.__get__('addJob');
     removeJob = cronEmailReport.__get__('removeJob');
@@ -24,13 +24,11 @@ describe('test/server-unit/cron/timers', () => {
   });
 
   it('#addJob() creates a cron job', () => {
-    console.log('hi1');
     const cb = mock.fn();
     const job = addJob(CRONTAB, cb, {});
 
     assert.equal(cb.mock.callCount(), 0);
     assert.ok(job.isActive);
-    console.log('hi2');
   });
 
   it('#addJob() will start the created cron job', () => {
