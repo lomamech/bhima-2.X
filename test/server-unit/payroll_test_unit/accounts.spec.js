@@ -59,7 +59,7 @@ describe('test/server-unit/payroll-test-unit/accounts', () => {
     sinon.stub(db, 'one').rejects(new Error('DB error'));
     req.params.id = 22;
 
-    expect(controller.detail(req, res)).to.be.rejectedWith('DB error');
+    expect(await controller.detail(req, res)).to.be.rejectedWith('DB error');
   });
 
   // ---------------------------------------------------------
