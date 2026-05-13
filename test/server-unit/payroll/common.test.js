@@ -1,6 +1,6 @@
-const chai = require('chai');
+const { describe, it } = require('node:test');
+const assert = require('node:assert/strict');
 
-const { expect } = chai;
 const common = require('../../../server/controllers/payroll/multiplePayroll/common');
 
 describe('test/server-unit/payroll/common', () => {
@@ -142,89 +142,89 @@ describe('test/server-unit/payroll/common', () => {
   }];
 
   it('#sumRubricValues() returns 0 for an empty array', () => {
-    expect(common.sumRubricValues([])).to.equal(0);
+    assert.equal(common.sumRubricValues([]), 0);
   });
 
   it('#sumRubricValues() to return to sum of rubrics\' value field', () => {
     const firstRubric = rubrics[0];
-    expect(common.sumRubricValues([firstRubric])).to.equal(0);
+    assert.equal(common.sumRubricValues([firstRubric]), 0);
 
     // total value is 30.
-    expect(common.sumRubricValues(rubrics)).to.equal(30);
+    assert.equal(common.sumRubricValues(rubrics), 30);
   });
 
   it('#sumRubricTotals() returns 0 for an empty array', () => {
-    expect(common.sumRubricTotals([])).to.equal(0);
+    assert.equal(common.sumRubricTotals([]), 0);
   });
 
   it('#sumRubricTotals() to return to sum of rubrics\' totals field', () => {
     const firstRubric = rubrics[0];
 
     // first rubric has a total of 10
-    expect(common.sumRubricTotals([firstRubric])).to.equal(10);
+    assert.equal(common.sumRubricTotals([firstRubric]), 10);
 
     // total value is 180 + 10 + 15 = 205
-    expect(common.sumRubricTotals(rubrics)).to.equal(205);
+    assert.equal(common.sumRubricTotals(rubrics), 205);
   });
 
   // TODO(@jniles) - Note, we should diversify our test rubrics to include an example of each kind of rubric.
 
   it('#isBenefitRubric() detects the benefits rubrics', () => {
     const firstRubric = rubrics[0];
-    expect(common.isBenefitRubric(firstRubric)).to.equal(true);
+    assert.equal(common.isBenefitRubric(firstRubric), true);
 
     const benefits = rubrics.filter(common.isBenefitRubric);
 
-    expect(benefits).to.have.length(3);
+    assert.equal(benefits.length, 3);
   });
 
   it('#isWithholdingRubric() detects the withholding rubrics', () => {
     const firstRubric = rubrics[0];
-    expect(common.isWithholdingRubric(firstRubric)).to.equal(false);
+    assert.equal(common.isWithholdingRubric(firstRubric), false);
 
     const withholdings = rubrics.filter(common.isWithholdingRubric);
 
-    expect(withholdings).to.have.length(0);
+    assert.equal(withholdings.length, 0);
   });
 
   it('#isPayrollTaxRubric() detects the withholding rubrics', () => {
     const firstRubric = rubrics[0];
-    expect(common.isPayrollTaxRubric(firstRubric)).to.equal(false);
+    assert.equal(common.isPayrollTaxRubric(firstRubric), false);
 
     const taxes = rubrics.filter(common.isPayrollTaxRubric);
 
-    expect(taxes).to.have.length(0);
+    assert.equal(taxes.length, 0);
   });
 
   it('#isPensionFundRubric() detects the pension fund rubrics', () => {
     const firstRubric = rubrics[0];
-    expect(common.isPensionFundRubric(firstRubric)).to.equal(false);
+    assert.equal(common.isPensionFundRubric(firstRubric), false);
 
     const pensions = rubrics.filter(common.isPensionFundRubric);
 
-    expect(pensions).to.have.length(0);
+    assert.equal(pensions.length, 0);
   });
 
   it('#matchCostCenters() matches cost centers on the appropriate keys', () => {
     const matcher = common.matchCostCenters(costCenters, 'expense_account_id');
 
     const result = rubrics.map(matcher);
-    expect(result[0].cost_center_id).to.equal(undefined);
-    expect(result[1].cost_center_id).to.equal(4);
-    expect(result[2].cost_center_id).to.equal(4);
+    assert.equal(result[0].cost_center_id, undefined);
+    assert.equal(result[1].cost_center_id, 4);
+    assert.equal(result[2].cost_center_id, 4);
   });
 
   it('#matchCostCenters() fails gracefully in error cases', () => {
     const emptyCostCenters = common.matchCostCenters([], 'expense_account_id');
 
     const emptyCostCenterMatches = rubrics.map(emptyCostCenters);
-    expect(emptyCostCenterMatches).to.have.length(3);
-    expect(emptyCostCenterMatches[1].cost_center_id).to.equal(undefined);
+    assert.equal(emptyCostCenterMatches.length, 3);
+    assert.equal(emptyCostCenterMatches[1].cost_center_id, undefined);
 
     const nonExistantAccountId = common.matchCostCenters(costCenters, 'nonexistant_account_property');
 
     const nonExistantAccountIdMatches = rubrics.map(nonExistantAccountId);
-    expect(nonExistantAccountIdMatches).to.have.length(3);
-    expect(nonExistantAccountIdMatches[1].cost_center_id).to.equal(undefined);
+    assert.equal(nonExistantAccountIdMatches.length, 3);
+    assert.equal(nonExistantAccountIdMatches[1].cost_center_id, undefined);
   });
 });

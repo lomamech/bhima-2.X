@@ -1,7 +1,9 @@
-const { expect } = require('chai');
+
+const { describe, it } = require('node:test');
+const assert = require('node:assert/strict');
+
 const util = require('../../../server/lib/util');
-const { calculateFinalIPR } = require('../../../server/controllers/payroll/multiplePayroll/calculation');
-const { calculateIPRTaxRate } = require('../../../server/controllers/payroll/multiplePayroll/calculation');
+const { calculateFinalIPR, calculateIPRTaxRate } = require('../../../server/controllers/payroll/multiplePayroll/calculation');
 
 describe('calculateFinalIPR function tests', () => {
 
@@ -23,19 +25,19 @@ describe('calculateFinalIPR function tests', () => {
   const DECIMAL_PRECISION = 2;
 
   it('should return 0 if annualCumulation is 0 or negative', () => {
-    expect(calculateFinalIPR(0, iprScales, employee.nb_enfant, enterpriseExchangeRate, iprExchangeRate, DECIMAL_PRECISION)).to.equal(0);
-    expect(calculateFinalIPR(-100, iprScales, employee.nb_enfant, enterpriseExchangeRate, iprExchangeRate, DECIMAL_PRECISION)).to.equal(0);
+    assert.equal(calculateFinalIPR(0, iprScales, employee.nb_enfant, enterpriseExchangeRate, iprExchangeRate, DECIMAL_PRECISION), 0);
+    assert.equal(calculateFinalIPR(-100, iprScales, employee.nb_enfant, enterpriseExchangeRate, iprExchangeRate, DECIMAL_PRECISION), 0);
   });
 
   it('should throw an error if iprScales is empty or invalid', () => {
-    expect(() => calculateFinalIPR(1000, [], employee.nb_enfant, enterpriseExchangeRate, iprExchangeRate, DECIMAL_PRECISION)).to.throw('Invalid IPR scales');
-    expect(() => calculateFinalIPR(1000, null, employee.nb_enfant, enterpriseExchangeRate, iprExchangeRate, DECIMAL_PRECISION)).to.throw('Invalid IPR scales');
+    assert.throws(() => calculateFinalIPR(1000, [], employee.nb_enfant, enterpriseExchangeRate, iprExchangeRate, DECIMAL_PRECISION), /Invalid IPR scales/);
+    assert.throws(() => calculateFinalIPR(1000, null, employee.nb_enfant, enterpriseExchangeRate, iprExchangeRate, DECIMAL_PRECISION), /Invalid IPR scales/);
   });
 
   it('should calculate correct IPR for first tranche (0% rate)', () => {
     const annualIncome = 500000; // inside first tranche
     const iprValue = calculateFinalIPR(annualIncome, iprScales, employee.nb_enfant, enterpriseExchangeRate, iprExchangeRate, DECIMAL_PRECISION);
-    expect(iprValue).to.equal(0);
+    assert.equal(iprValue, 0);
   });
 
   it('should calculate correct IPR for second tranche (15% rate) with 2 children', () => {
@@ -47,7 +49,7 @@ describe('calculateFinalIPR function tests', () => {
     const expectedIPR = util.roundDecimal(reducedIPR * (enterpriseExchangeRate / iprExchangeRate), DECIMAL_PRECISION);
 
     const iprValue = calculateFinalIPR(annualIncome, iprScales, employee.nb_enfant, enterpriseExchangeRate, iprExchangeRate, DECIMAL_PRECISION);
-    expect(iprValue).to.equal(expectedIPR);
+    assert.equal(iprValue, expectedIPR);
   });
 
   /**
@@ -71,7 +73,7 @@ describe('calculateFinalIPR function tests', () => {
     );
 
     // Final IPR must never be negative
-    expect(iprValuePositive).to.be.at.least(0);
+    assert.ok(iprValuePositive >= 0);
 
     // Case 2: IPR = 0 (first tax bracket)
     const annualIncomeZero = 500000; // first bracket, IPR = 0
@@ -87,7 +89,7 @@ describe('calculateFinalIPR function tests', () => {
     );
 
     // No deduction should apply, IPR stays zero
-    expect(iprValueZero).to.equal(0);
+    assert.equal(iprValueZero, 0);
   });
 
 });
